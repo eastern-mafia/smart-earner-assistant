@@ -3,9 +3,7 @@
 import Header from "@/components/Header";
 import { env } from "@/env";
 import "@/styles/globals.css";
-import { ClerkProvider, useAuth } from "@clerk/nextjs";
-import { ConvexReactClient } from "convex/react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { ThemeProvider } from "next-themes";
 
 import { Geist } from "next/font/google";
@@ -23,19 +21,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body className="h-screen overflow-hidden">
-        <ClerkProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-              <Header />
-              <div className="h-full overflow-auto">{children}</div>
-            </ConvexProviderWithClerk>
-          </ThemeProvider>
-        </ClerkProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ConvexProvider client={convex}>
+            <Header />
+            <div className="h-full overflow-auto">{children}</div>
+          </ConvexProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
