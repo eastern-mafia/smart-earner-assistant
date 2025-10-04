@@ -1,6 +1,7 @@
 "use client";
 
 import { Break } from "@/components/Break";
+import HexMap from "@/components/HexMap";
 import { Button } from "@/components/ui/button";
 import { Car, Check, Star, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -101,6 +102,7 @@ export default function SPA() {
       <AnimatePresence>
         {isBreak && <Break onEnd={() => setIsBreak(false)} />}
       </AnimatePresence>
+			<HexMap />
       <div className="flex h-screen w-screen flex-col">
         <div className="bg-background text-foreground flex h-full flex-col gap-4 p-8">
           <AnimatePresence>
