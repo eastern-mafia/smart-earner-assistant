@@ -1,16 +1,15 @@
 "use client";
 
-import Header from "@/components/Header";
 import { env } from "@/env";
 import "@/styles/globals.css";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { ThemeProvider } from "next-themes";
 
-import { Geist } from "next/font/google";
+import { Lexend_Deca } from "next/font/google";
 
-const geist = Geist({
+const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-lexend-deca",
 });
 
 const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
@@ -19,7 +18,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${lexendDeca.variable}`} suppressHydrationWarning>
       <body className="h-screen overflow-hidden">
         <ThemeProvider
           attribute="class"
@@ -28,7 +27,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ConvexProvider client={convex}>
-            <Header />
             <div className="h-full overflow-auto">{children}</div>
           </ConvexProvider>
         </ThemeProvider>

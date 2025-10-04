@@ -14,7 +14,7 @@ export default function HomePage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href="/todos"
+              href="/app"
               className="bg-primary text-primary-foreground inline-flex items-center justify-center rounded-md px-5 py-3 shadow transition hover:opacity-90"
             >
               Open the app
@@ -75,7 +75,7 @@ export default function HomePage() {
           </p>
           <div className="mt-6">
             <a
-              href="/todos"
+              href="/app"
               className="bg-primary text-primary-foreground inline-flex items-center justify-center rounded-md px-5 py-3 shadow transition hover:opacity-90"
             >
               Get started
