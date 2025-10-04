@@ -1,47 +1,34 @@
 "use client";
 
 import { Break } from "@/components/Break";
-import HexMap from "@/components/HexMap";
+import HexMap, { type Hex, type Marker, type ViewState } from "@/components/HexMap";
 import { Button } from "@/components/ui/button";
-import { Car, Check, Star, X } from "lucide-react";
+import { socket } from "@/lib/socket";
+import { Car, Check, Pause, Star, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 type Item = {
   id: string;
-  deltaSeconds: number;
   text: string;
   type: "suggestion" | "break";
 };
 
-const mockTimeline: Item[] = [
-  {
-    id: "1",
-    deltaSeconds: 0,
-    text: "Get to Rijswijk after this ride.",
-    type: "suggestion",
-  },
-  {
-    id: "2",
-    deltaSeconds: 2,
-    text: "Avoid the traffic jam on the A27.",
-    type: "suggestion",
-  },
-  {
-    id: "3",
-    deltaSeconds: 3,
-    text: "You've been driving for a while. Take a break?",
-    type: "break",
-  },
-];
+type ItemWithTimestamp = Item & {
+  timestamp: number;
+};
 
 function SuggestionCard({
+	type,
   text,
   onConfirm,
+	hasConfirm,
   onReject,
 }: {
+	type: Item["type"];
   text: string;
   onConfirm?: () => void;
+  hasConfirm: boolean;
   onReject?: () => void;
 }) {
   return (
@@ -52,18 +39,30 @@ function SuggestionCard({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-row items-center gap-2">
-        <Star className="text-ai w-4 h-4" strokeWidth={3} />
-        <p className="text-ai text-sm font-bold tracking-wider uppercase">
-          AI Suggestion
-        </p>
-      </div>
+			{type === "suggestion" && (
+				<div className="flex flex-row items-center gap-2">
+					<Star className="text-ai w-4 h-4" strokeWidth={3} />
+					<p className="text-ai text-sm font-bold tracking-wider uppercase">
+						AI Suggestion
+					</p>
+				</div>
+			)}
+			{type === "break" && (
+				<div className="flex flex-row items-center gap-2">
+					<Pause className="text-break w-4 h-4" strokeWidth={3} />
+					<p className="text-break text-sm font-bold tracking-wider uppercase">
+						Break
+					</p>
+				</div>
+			)}
       <div className="flex flex-row items-center justify-between gap-2">
         <p className="text-lg font-semibold">{text}</p>
         <div className="flex flex-row gap-2">
+					{hasConfirm && (
           <Button size="icon" className="rounded-full" onClick={onConfirm}>
             <Check />
           </Button>
+					)}
           <Button
             size="icon"
             variant="secondary"
@@ -80,21 +79,42 @@ function SuggestionCard({
 
 export default function SPA() {
   const [isBreak, setIsBreak] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<ItemWithTimestamp[]>([]);
+	const [hex, setHex] = useState<Hex[] | null>(null);
+	const [marker, setMarker] = useState<Marker | null>(null);
+	const [initialViewState, setInitialViewState] = useState<ViewState | null>(null);
 
   useEffect(() => {
-    const timeouts: NodeJS.Timeout[] = [];
-    for (const item of mockTimeline) {
-      timeouts.push(
-        setTimeout(() => {
-          setItems((prevItems) => [...prevItems, item]);
-        }, item.deltaSeconds * 1000),
-      );
-    }
+		function onInitialize(viewState: ViewState) {
+			setInitialViewState(viewState);
+		}
 
-    return () => {
-      timeouts.forEach(clearTimeout);
-    };
+		function onSuggestion(item: Item) {
+			setItems((prevItems) => [...prevItems, { ...item, timestamp: Date.now() }]);
+		}
+
+		function onHex(hex: Hex[]) {
+			setHex(hex);
+		}
+		function onMarker(marker: Marker) {
+			setMarker(marker);
+		}
+
+		socket.on("initialize", onInitialize);
+		socket.on("suggestion", onSuggestion);
+		socket.on("hex", onHex);
+		socket.on("marker", onMarker);
+
+		if (socket.connected) {
+			socket.emit("request-initialize");
+		}
+
+		return () => {
+			socket.off("initialize", onInitialize);
+			socket.off("suggestion", onSuggestion);
+			socket.off("hex", onHex);
+			socket.off("marker", onMarker);
+		};
   }, []);
 
   return (
@@ -102,7 +122,7 @@ export default function SPA() {
       <AnimatePresence>
         {isBreak && <Break onEnd={() => setIsBreak(false)} />}
       </AnimatePresence>
-			<HexMap />
+			{initialViewState && <HexMap hex={hex} marker={marker} viewState={initialViewState} />}
       <div className="flex h-screen w-screen flex-col">
         <div className="bg-background text-foreground flex h-full flex-col gap-4 p-8">
           <AnimatePresence>
@@ -118,18 +138,15 @@ export default function SPA() {
               </motion.div>
             )}
             {items
-              .sort((a, b) => b.deltaSeconds - a.deltaSeconds)
+              .sort((a, b) => b.timestamp - a.timestamp)
               .map((item) => {
                 if (item.type === "suggestion") {
                   return (
                     <SuggestionCard
-                      key={item.text}
+                      key={item.id}
+                      type="suggestion"
                       text={item.text}
-                      onConfirm={() =>
-                        setItems((prevItems) =>
-                          prevItems.filter((i) => i.id !== item.id),
-                        )
-                      }
+                      hasConfirm={false}
                       onReject={() =>
                         setItems((prevItems) =>
                           prevItems.filter((i) => i.id !== item.id),
@@ -141,8 +158,10 @@ export default function SPA() {
                 if (item.type === "break") {
                   return (
                     <SuggestionCard
-                      key={item.text}
+                      key={item.id}
+                      type="break"
                       text={item.text}
+                      hasConfirm={true}
                       onConfirm={() => {
                         setIsBreak(true);
                         setItems((prevItems) =>

@@ -31,18 +31,26 @@ const CIRCLE_RADIUS = 120;
 const SVG_SIDE_LENGTH = 280;
 
 const displayTime = (seconds: number) => {
+	const hoursValue = Math.floor(seconds / 3600);
   const minutesValue = Math.floor(seconds / 60);
   const secondsValue = seconds % 60;
   const minutesString = minutesValue.toString().padStart(2, "0");
   const secondsString = secondsValue.toString().padStart(2, "0");
-  return `${minutesString}:${secondsString}`;
+	let result = "";
+	if (hoursValue > 0) {
+		result += `${hoursValue}:`;
+	}
+	result += `${minutesString}:${secondsString}`;
+  return result;
 };
 
 export function Break({ onEnd }: { onEnd: () => void }) {
   const [secondsTotal, setSecondsTotal] = useState(60 * 5);
   const [secondsLeft, setSecondsLeft] = useState(secondsTotal);
   const [isRunning, setIsRunning] = useState(true);
-  const [activityIndex, setActivityIndex] = useState(0);
+  const [activityIndex, setActivityIndex] = useState(
+    Math.floor(Math.random() * actionableActivities.length),
+  );
 
   const percentage = secondsTotal > 0 ? (secondsLeft / secondsTotal) * 100 : 0;
 
@@ -89,7 +97,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
       animate={{ bottom: 0 }}
       exit={{ bottom: "100vh" }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="absolute bg-background text-foreground z-10 flex h-screen w-screen flex-col items-center justify-center gap-8"
+      className="bg-background text-foreground absolute z-20 flex h-screen w-screen flex-col items-center justify-center gap-8"
     >
       <h1 className="text-4xl font-bold">Break time</h1>
       <motion.p

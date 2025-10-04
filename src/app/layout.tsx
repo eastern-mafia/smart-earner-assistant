@@ -3,7 +3,6 @@
 import { env } from "@/env";
 import "@/styles/globals.css";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { ThemeProvider } from "next-themes";
 
 import { Lexend_Deca } from "next/font/google";
 
@@ -18,18 +17,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${lexendDeca.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${lexendDeca.variable}`}
+      suppressHydrationWarning
+    >
       <body className="h-screen overflow-hidden">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ConvexProvider client={convex}>
-            <div className="h-full overflow-auto">{children}</div>
-          </ConvexProvider>
-        </ThemeProvider>
+        <ConvexProvider client={convex}>
+          <div className="h-full overflow-auto">{children}</div>
+        </ConvexProvider>
       </body>
     </html>
   );

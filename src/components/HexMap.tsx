@@ -5,33 +5,47 @@ import { H3HexagonLayer } from "@deck.gl/geo-layers";
 import { Map } from "react-map-gl/mapbox";
 import { env } from "@/env";
 import { useState } from "react";
+import { IconLayer } from "@deck.gl/layers";
 
-type Hex = {
+export type ViewState = {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+  pitch: number;
+  bearing: number;
+};
+
+export type Hex = {
   hex: string;
   color: [number, number, number];
 };
 
-const data: Hex[] = [
-  { hex: "8828308281fffff", color: [255, 0, 0] },
-  { hex: "8828308283fffff", color: [0, 255, 0] },
-  { hex: "8828308285fffff", color: [0, 0, 255] },
-];
-
-const INITIAL_VIEW_STATE = {
-  longitude: -122.4,
-  latitude: 37.8,
-  zoom: 12,
-  pitch: 45,
-  bearing: 0,
+export type Marker = {
+	color: [number, number, number];
+	coordinates: [number, number];
 };
 
-export default function HexMap() {
-  const layer = new H3HexagonLayer<Hex>({
+export default function HexMap({ hex, marker, viewState }: { hex: Hex[] | null, marker: Marker | null, viewState: ViewState }) {
+  const hexLayer = new H3HexagonLayer<Hex>({
     id: "hex-layer",
-    data,
+    data: hex ?? [],
     getHexagon: (d: Hex) => d.hex,
     getFillColor: (d: Hex) => d.color,
     extruded: false,
+    pickable: true,
+  });
+
+	const iconLayer = new IconLayer<Marker>({
+    id: "IconLayer",
+    data: marker ? [marker] : [],
+    getColor: (d: Marker) => d.color,
+    getIcon: () => "marker",
+    getPosition: (d: Marker) => d.coordinates,
+    getSize: 40,
+    iconAtlas:
+      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+    iconMapping:
+      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
     pickable: true,
   });
 
@@ -51,9 +65,9 @@ export default function HexMap() {
       <DeckGL
         width={isFullScreen ? "100%" : 150}
         height={isFullScreen ? "100%" : 240}
-        initialViewState={INITIAL_VIEW_STATE}
+        initialViewState={viewState}
         controller={true}
-        layers={[layer]}
+        layers={[hexLayer, iconLayer]}
       >
         <Map
           mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_TOKEN}
