@@ -45,7 +45,7 @@ export default function AlgorithmPage() {
             <p className="text-muted-foreground mt-4 leading-relaxed">
               Our approach aims to forecast where demand will be in the next
               time period, and create an optimised assignment of drivers to best
-              satify this demand. Then we put the drivers "in motion" towards
+              satify this demand. Then we put the drivers &quot;in motion&quot; towards
               areas of higher demand. This ensures small idle times and higher
               surge rates, both of which maximise earnings per hour.
             </p>
@@ -66,13 +66,13 @@ export default function AlgorithmPage() {
               dependant on time of day and day of the week. After analysing the
               provided data, we realised that most of the rides start and end in
               similar locations. We modeled this feature by randomly assigning
-              hexagons as "hot-spots", area for which we significantly boost the
+              hexagons as &quot;hot-spots&quot;, area for which we significantly boost the
               amount of rides starting and ending at. We also add a small amount
               of noise to each demand value.
             </p>
             <p className="text-muted-foreground mt-4 leading-relaxed">
               Most assumptions should hold when considering eats instead of
-              rides. The "hot-spots" are even more proeminent for starting
+              rides. The &quot;hot-spots&quot; are even more proeminent for starting
               locations, as all rides start at predefined restaurants. Thus,
               adapting the model to eats is a matter of tweaking data
               generation.
@@ -113,7 +113,7 @@ export default function AlgorithmPage() {
           </div>
           <div className="bg-card relative order-2 aspect-[16/10] w-full overflow-hidden rounded-lg border md:order-1">
             <Image
-              src="/sample.png"
+              src="/hex.png"
               alt="Placeholder for the driver/order simulation"
               fill
               className="object-cover"
