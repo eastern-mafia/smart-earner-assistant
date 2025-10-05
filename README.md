@@ -1,4 +1,5 @@
 # Link to data repo: https://github.com/eastern-mafia/data
+# Website deployed at: https://smart-earner-assistant.vercel.app/
 
 # How to run this template
 
