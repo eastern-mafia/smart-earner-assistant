@@ -1,3 +1,5 @@
+# Link to data repo: https://github.com/eastern-mafia/data
+
 # How to run this template
 
 ## 1. Download repo
