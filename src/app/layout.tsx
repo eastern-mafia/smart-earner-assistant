@@ -1,6 +1,5 @@
-"use client";
-
 import "@/styles/globals.css";
+import type { Metadata } from "next";
 
 import { Lexend_Deca } from "next/font/google";
 
@@ -8,6 +7,15 @@ const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
   variable: "--font-lexend-deca",
 });
+
+const DEPLOY_URL = "https://smart-earner-assistant.vercel.app/";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(DEPLOY_URL),
+  title: "DriveNet",
+  description: "AI-powered co-pilot for Uber drivers",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
+};
 
 export default function RootLayout({
   children,
