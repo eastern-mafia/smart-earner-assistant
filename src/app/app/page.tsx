@@ -124,7 +124,7 @@ export default function SPA() {
   const INITIAL_VIEW_STATE: ViewState = {
     longitude: -122.4,
     latitude: 37.8,
-    zoom: 12,
+    zoom: 9,
     pitch: 45,
     bearing: 0,
   };
@@ -158,6 +158,7 @@ export default function SPA() {
       setHex(hex);
     }
     function onMarker(marker: Marker) {
+			console.log({marker})
       setMarker(marker);
     }
 

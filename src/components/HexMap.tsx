@@ -41,7 +41,11 @@ export default function HexMap({
     id: "hex-layer",
     data: hex ?? [],
     getHexagon: (d: Hex) => d.hex,
-    getFillColor: (d: Hex) => [d.value, 0, 0],
+		getFillColor: (d: Hex) => {
+			if (d.value < 85) return [d.value * 3, 0, 0, 70];
+			if (d.value < 85 * 2) return [d.value * 3 / 2, d.value * 3 / 2, 0, 70];
+			return [0, d.value, 0, 70];
+		},
     extruded: false,
     pickable: true,
   });
