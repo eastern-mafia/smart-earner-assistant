@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Minus, Plus } from "lucide-react";
 import { motion } from "motion/react";
@@ -32,7 +32,7 @@ const SVG_SIDE_LENGTH = 280;
 
 const displayTime = (seconds: number) => {
 	const hoursValue = Math.floor(seconds / 3600);
-  const minutesValue = Math.floor(seconds / 60);
+  const minutesValue = Math.floor(seconds % 3600 / 60);
   const secondsValue = seconds % 60;
   const minutesString = minutesValue.toString().padStart(2, "0");
   const secondsString = secondsValue.toString().padStart(2, "0");
@@ -51,6 +51,8 @@ export function Break({ onEnd }: { onEnd: () => void }) {
   const [activityIndex, setActivityIndex] = useState(
     Math.floor(Math.random() * actionableActivities.length),
   );
+  const onEndRef = useRef(onEnd);
+  onEndRef.current = onEnd;
 
   const percentage = secondsTotal > 0 ? (secondsLeft / secondsTotal) * 100 : 0;
 
@@ -63,7 +65,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
       setSecondsLeft((prevSeconds) => {
         if (prevSeconds <= 0) {
           setIsRunning(false);
-          onEnd();
+          onEndRef.current();
           return 0;
         }
         return prevSeconds - 1;
@@ -84,7 +86,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
       clearInterval(interval);
       clearInterval(activityInterval);
     };
-  }, [isRunning, onEnd]);
+  }, [isRunning]);
 
   const addBreakTime = (time: number) => {
     setSecondsTotal(Math.max(0, secondsTotal + time));
@@ -148,6 +150,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
             addBreakTime(60 * 5);
             setIsRunning(true);
           }}
+          className="cursor-pointer"
         >
           <Plus />
         </Button>
@@ -155,6 +158,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
           size="icon"
           variant="secondary"
           onClick={() => addBreakTime(-60 * 5)}
+          className="cursor-pointer"
         >
           <Minus />
         </Button>
@@ -167,6 +171,7 @@ export function Break({ onEnd }: { onEnd: () => void }) {
             setIsRunning(false);
             onEnd();
           }}
+          className="cursor-pointer"
         >
           End break
         </Button>

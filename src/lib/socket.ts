@@ -1,4 +1,10 @@
 import { env } from "@/env";
-import { io } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 
-export const socket = io(env.NEXT_PUBLIC_WS_SERVER_URL);
+let socket: Socket | null = null;
+
+if (env.NEXT_PUBLIC_WS_SERVER_URL) {
+	socket = io(env.NEXT_PUBLIC_WS_SERVER_URL);
+}
+
+export { socket };
