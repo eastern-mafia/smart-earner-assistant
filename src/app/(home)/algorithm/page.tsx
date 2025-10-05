@@ -144,9 +144,9 @@ export default function AlgorithmPage() {
               that idles in the spot he finished the previous ride.
             </p>
           </div>
-          <div className="bg-card relative aspect-[16/10] w-full overflow-hidden rounded-lg border">
+          <div className="bg-card relative aspect-[16/12.5] w-full overflow-hidden rounded-lg border">
             <Image
-              src="/sample.png"
+              src="/simulation_results_1.png"
               alt="Placeholder for the AI planning overview"
               fill
               className="object-cover"
